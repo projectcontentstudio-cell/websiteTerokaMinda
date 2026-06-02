@@ -3,7 +3,14 @@ const crypto = require('crypto');
 // Server-side only. Do not place this value in index.html or any frontend file.
 const TOYYIBPAY_SECRET_KEY = 'w3ffnh2b-wxgg-1c4c-eb4p-c8gvxbxdpq0k';
 const TOYYIBPAY_CATEGORY_CODE = '0z8hg4h6';
-const TOYYIBPAY_BASE_URL = 'https://toyyibpay.com';
+
+// Sandbox mode for ToyyibPay testing. For real customer payments, change to 'live'
+// and use LIVE secret key + LIVE category code from the same ToyyibPay account.
+const TOYYIBPAY_MODE = 'sandbox'; // 'live' or 'sandbox'
+const TOYYIBPAY_BASE_URL = TOYYIBPAY_MODE === 'sandbox'
+  ? 'https://dev.toyyibpay.com'
+  : 'https://toyyibpay.com';
+
 const SITE_URL = 'https://terokaminda-edu.vercel.app';
 
 const PRODUCTS = {
@@ -118,10 +125,10 @@ function getBalancedJsonCandidate(text) {
 
 function parseToyyibPayResponse(rawText) {
   const clean = String(rawText || '').replace(/^\uFEFF/, '').trim();
-  const preview = stripHtml(clean).slice(0, 900) || '(empty response)';
+  const preview = stripHtml(clean).slice(0, 1200) || '(empty response)';
 
   if (!clean) {
-    return { ok: false, message: 'ToyyibPay tidak menghantar respons.', details: preview };
+    return { ok: false, code: 'EMPTY_RESPONSE', message: 'ToyyibPay tidak menghantar respons.', details: preview };
   }
 
   const jsonCandidate = getBalancedJsonCandidate(clean);
@@ -135,8 +142,19 @@ function parseToyyibPayResponse(rawText) {
         return { ok: true, billCode: String(billCode), details: json };
       }
 
+      const compact = JSON.stringify(json);
+      if (/KEY-DID-NOT-EXIST/i.test(compact)) {
+        return {
+          ok: false,
+          code: 'KEY_DID_NOT_EXIST',
+          message: 'ToyyibPay tidak menerima secret key ini untuk mode API sekarang.',
+          details: json
+        };
+      }
+
       return {
         ok: false,
+        code: 'NO_BILLCODE',
         message: 'ToyyibPay tidak pulangkan BillCode.',
         details: json
       };
@@ -154,16 +172,63 @@ function parseToyyibPayResponse(rawText) {
     return { ok: true, billCode: clean, details: preview };
   }
 
+  if (/KEY-DID-NOT-EXIST/i.test(clean)) {
+    return {
+      ok: false,
+      code: 'KEY_DID_NOT_EXIST',
+      message: 'ToyyibPay tidak menerima secret key ini untuk mode API sekarang.',
+      details: preview
+    };
+  }
+
   return {
     ok: false,
+    code: 'NO_BILLCODE',
     message: 'ToyyibPay memberi respons tanpa BillCode.',
     details: preview
   };
 }
 
-function appendFormValue(form, key, value) {
+function appendParam(params, key, value) {
   if (value === undefined || value === null || value === '') return;
-  form.append(key, String(value));
+  params.append(key, String(value));
+}
+
+function buildToyyibPayParams({ product, referenceNo, name, email, phone }) {
+  const params = new URLSearchParams();
+
+  // Exact field names from ToyyibPay Create Bill API.
+  appendParam(params, 'userSecretKey', TOYYIBPAY_SECRET_KEY.trim());
+  appendParam(params, 'categoryCode', TOYYIBPAY_CATEGORY_CODE.trim());
+  appendParam(params, 'billName', cleanToyyibText(product.billName, 30));
+  appendParam(params, 'billDescription', cleanToyyibText(product.billDescription, 100));
+  appendParam(params, 'billPriceSetting', '1');
+  appendParam(params, 'billPayorInfo', '1');
+  appendParam(params, 'billAmount', product.amountCents);
+  appendParam(params, 'billReturnUrl', `${SITE_URL}/`);
+  appendParam(params, 'billCallbackUrl', `${SITE_URL}/api/toyyibpayfallback`);
+  appendParam(params, 'billExternalReferenceNo', referenceNo);
+  appendParam(params, 'billTo', name);
+  appendParam(params, 'billEmail', email);
+  appendParam(params, 'billPhone', phone);
+  appendParam(params, 'billPaymentChannel', '0');
+
+  return params;
+}
+
+function getHelpfulError(parsed, httpStatus) {
+  if (parsed.code === 'KEY_DID_NOT_EXIST') {
+    return {
+      message: 'ToyyibPay kata secret key tidak wujud untuk API mode sekarang.',
+      details: `ToyyibPay response: ${typeof parsed.details === 'string' ? parsed.details : JSON.stringify(parsed.details)}. Semak sama ada secret key ini daripada LIVE atau SANDBOX. Fail ini sekarang menggunakan TOYYIBPAY_MODE=${TOYYIBPAY_MODE}. Jika key/category daripada sandbox, tukar TOYYIBPAY_MODE kepada 'sandbox'. Jika untuk bayaran sebenar, salin semula LIVE Secret Key dan Category Code daripada dashboard ToyyibPay.`
+    };
+  }
+
+  return {
+    message: parsed.message || 'Gagal cipta bill ToyyibPay.',
+    details: parsed.details,
+    httpStatus
+  };
 }
 
 module.exports = async function handler(req, res) {
@@ -193,54 +258,35 @@ module.exports = async function handler(req, res) {
   }
 
   const referenceNo = makeReferenceNo();
-
-  // Use multipart/form-data to match ToyyibPay's PHP sample style.
-  const form = new FormData();
-  appendFormValue(form, 'userSecretKey', TOYYIBPAY_SECRET_KEY);
-  appendFormValue(form, 'categoryCode', TOYYIBPAY_CATEGORY_CODE);
-  appendFormValue(form, 'billName', cleanToyyibText(product.billName, 30));
-  appendFormValue(form, 'billDescription', cleanToyyibText(product.billDescription, 100));
-  appendFormValue(form, 'billPriceSetting', '1');
-  appendFormValue(form, 'billPayorInfo', '1');
-  appendFormValue(form, 'billAmount', product.amountCents);
-  appendFormValue(form, 'billReturnUrl', `${SITE_URL}/`);
-  appendFormValue(form, 'billCallbackUrl', `${SITE_URL}/api/toyyibpayfallback`);
-  appendFormValue(form, 'billExternalReferenceNo', referenceNo);
-  appendFormValue(form, 'billTo', name);
-  appendFormValue(form, 'billEmail', email);
-  appendFormValue(form, 'billPhone', phone);
-  appendFormValue(form, 'billSplitPayment', '0');
-  appendFormValue(form, 'billSplitPaymentArgs', '');
-  appendFormValue(form, 'billPaymentChannel', '0');
-  appendFormValue(form, 'billContentEmail', 'Terima kasih kerana membeli Teroka Minda Ebook.');
-  appendFormValue(form, 'billExpiryDays', '3');
+  const params = buildToyyibPayParams({ product, referenceNo, name, email, phone });
 
   try {
     const toyyibResponse = await fetch(`${TOYYIBPAY_BASE_URL}/index.php/api/createBill`, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
         Accept: 'application/json, text/plain, */*'
       },
-      body: form
+      body: params.toString()
     });
 
     const rawText = await toyyibResponse.text();
     const parsed = parseToyyibPayResponse(rawText);
 
     console.log('ToyyibPay createBill:', {
+      mode: TOYYIBPAY_MODE,
+      baseUrl: TOYYIBPAY_BASE_URL,
       httpStatus: toyyibResponse.status,
       httpOk: toyyibResponse.ok,
       parsedOk: parsed.ok,
+      parsedCode: parsed.code || null,
       billCode: parsed.billCode || null,
       detailsPreview: typeof parsed.details === 'string' ? parsed.details.slice(0, 300) : parsed.details
     });
 
     if (!toyyibResponse.ok || !parsed.ok || !parsed.billCode) {
-      sendJson(res, 502, {
-        message: parsed.message || 'Gagal cipta bill ToyyibPay.',
-        httpStatus: toyyibResponse.status,
-        details: parsed.details
-      });
+      const errorPayload = getHelpfulError(parsed, toyyibResponse.status);
+      sendJson(res, 502, errorPayload);
       return;
     }
 
