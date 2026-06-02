@@ -10,7 +10,9 @@ const TOYYIBPAY_CATEGORY_CODE = process.env.TOYYIBPAY_CATEGORY_CODE || '0z8hg4h6
 
 const PRODUCTS = {
   'teroka-minda-ebook': {
+    // ToyyibPay billName: max 30 alphanumeric characters, spaces and underscores only.
     billName: 'Teroka Minda Ebook',
+    // ToyyibPay billDescription: max 100 alphanumeric characters, spaces and underscores only.
     billDescription: 'Teroka Minda Ebook Digital',
     amountCents: 2900
   }
@@ -24,6 +26,13 @@ function cleanText(value, maxLength) {
   return String(value || '')
     .trim()
     .replace(/[^a-zA-Z0-9 _@.+-]/g, '')
+    .slice(0, maxLength);
+}
+
+function cleanToyyibPayText(value, maxLength) {
+  return String(value || '')
+    .trim()
+    .replace(/[^a-zA-Z0-9 _]/g, '')
     .slice(0, maxLength);
 }
 
@@ -50,12 +59,97 @@ async function readJsonBody(req) {
   });
 }
 
+function stripHtml(value) {
+  return String(value || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extractJsonCandidate(rawText) {
+  const clean = String(rawText || '').replace(/^\uFEFF/, '').trim();
+  if (!clean) return '';
+
+  // Normal case: ToyyibPay returns JSON such as [{"BillCode":"gcbhict9"}].
+  if (clean.startsWith('[') || clean.startsWith('{')) return clean;
+
+  // Some servers prepend PHP warnings/notices before the JSON. Extract the JSON part.
+  const arrayStart = clean.indexOf('[');
+  const objectStart = clean.indexOf('{');
+  const starts = [arrayStart, objectStart].filter(index => index >= 0);
+  if (!starts.length) return '';
+
+  const start = Math.min(...starts);
+  const endArray = clean.lastIndexOf(']');
+  const endObject = clean.lastIndexOf('}');
+  const end = Math.max(endArray, endObject);
+
+  return end > start ? clean.slice(start, end + 1) : '';
+}
+
+function parseToyyibPayCreateBillResponse(rawText) {
+  const clean = String(rawText || '').replace(/^\uFEFF/, '').trim();
+  const preview = stripHtml(clean).slice(0, 500);
+
+  if (!clean) {
+    return { ok: false, message: 'ToyyibPay tidak menghantar sebarang respons.', preview };
+  }
+
+  const jsonCandidate = extractJsonCandidate(clean);
+  if (jsonCandidate) {
+    try {
+      const data = JSON.parse(jsonCandidate);
+      const first = Array.isArray(data) ? data[0] : data;
+      const billCode = first?.BillCode || first?.billCode || first?.billcode;
+
+      if (billCode) {
+        return { ok: true, billCode: String(billCode), data, preview };
+      }
+
+      return {
+        ok: false,
+        message: 'ToyyibPay tidak pulangkan BillCode.',
+        data,
+        preview
+      };
+    } catch (error) {
+      // Continue to fallback extraction below.
+    }
+  }
+
+  // Fallback for unexpected raw formats that still contain a BillCode.
+  const billCodeMatch = clean.match(/["']?BillCode["']?\s*[:=>]+\s*["']?([a-zA-Z0-9]+)/i);
+  if (billCodeMatch?.[1]) {
+    return { ok: true, billCode: billCodeMatch[1], data: null, preview };
+  }
+
+  // Fallback if ToyyibPay ever returns only the code.
+  if (/^[a-zA-Z0-9]{6,30}$/.test(clean)) {
+    return { ok: true, billCode: clean, data: null, preview };
+  }
+
+  return {
+    ok: false,
+    message: 'ToyyibPay memberi respons yang bukan JSON atau tidak mengandungi BillCode.',
+    data: null,
+    preview
+  };
+}
+
+function sendJson(res, statusCode, payload) {
+  res.statusCode = statusCode;
+  res.end(JSON.stringify(payload));
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
   if (req.method !== 'POST') {
-    res.statusCode = 405;
-    res.end(JSON.stringify({ message: 'Method not allowed' }));
+    sendJson(res, 405, { message: 'Method not allowed' });
     return;
   }
 
@@ -63,10 +157,9 @@ module.exports = async function handler(req, res) {
   const categoryCode = TOYYIBPAY_CATEGORY_CODE;
 
   if (!secretKey || !categoryCode) {
-    res.statusCode = 500;
-    res.end(JSON.stringify({
+    sendJson(res, 500, {
       message: 'ToyyibPay credential belum diset.'
-    }));
+    });
     return;
   }
 
@@ -74,8 +167,7 @@ module.exports = async function handler(req, res) {
   try {
     body = await readJsonBody(req);
   } catch (error) {
-    res.statusCode = 400;
-    res.end(JSON.stringify({ message: 'Invalid JSON body' }));
+    sendJson(res, 400, { message: 'Invalid JSON body' });
     return;
   }
 
@@ -85,8 +177,7 @@ module.exports = async function handler(req, res) {
   const phone = cleanText(body.phone, 30);
 
   if (!name || !isValidEmail(email) || !phone) {
-    res.statusCode = 400;
-    res.end(JSON.stringify({ message: 'Sila isi nama, email dan nombor WhatsApp yang sah.' }));
+    sendJson(res, 400, { message: 'Sila isi nama, email dan nombor WhatsApp yang sah.' });
     return;
   }
 
@@ -95,8 +186,8 @@ module.exports = async function handler(req, res) {
   const form = new URLSearchParams({
     userSecretKey: secretKey,
     categoryCode,
-    billName: product.billName,
-    billDescription: product.billDescription,
+    billName: cleanToyyibPayText(product.billName, 30),
+    billDescription: cleanToyyibPayText(product.billDescription, 100),
     billPriceSetting: '1',
     billPayorInfo: '1',
     billAmount: String(product.amountCents),
@@ -118,47 +209,42 @@ module.exports = async function handler(req, res) {
     const tpResponse = await fetch(`${TOYYIBPAY_BASE_URL}/index.php/api/createBill`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json, text/plain, */*'
       },
       body: form.toString()
     });
 
     const rawText = await tpResponse.text();
-    let data;
+    const parsed = parseToyyibPayCreateBillResponse(rawText);
 
-    try {
-      data = JSON.parse(rawText);
-    } catch (error) {
-      res.statusCode = 502;
-      res.end(JSON.stringify({
-        message: 'ToyyibPay memberi respons yang tidak dapat dibaca.',
-        details: rawText.slice(0, 300)
-      }));
+    // Helpful in Vercel/Netlify logs, but never prints the secret key.
+    console.log('ToyyibPay createBill response:', {
+      httpStatus: tpResponse.status,
+      ok: tpResponse.ok,
+      parsedOk: parsed.ok,
+      billCode: parsed.billCode || null,
+      preview: parsed.preview || ''
+    });
+
+    if (!tpResponse.ok || !parsed.ok || !parsed.billCode) {
+      sendJson(res, 502, {
+        message: parsed.message || 'Gagal cipta bill ToyyibPay.',
+        httpStatus: tpResponse.status,
+        details: parsed.data || parsed.preview || 'Tiada maklumat lanjut daripada ToyyibPay.'
+      });
       return;
     }
 
-    const billCode = Array.isArray(data) ? data[0]?.BillCode : data?.BillCode;
-
-    if (!tpResponse.ok || !billCode) {
-      res.statusCode = 502;
-      res.end(JSON.stringify({
-        message: 'Gagal cipta bill ToyyibPay.',
-        details: data
-      }));
-      return;
-    }
-
-    res.statusCode = 200;
-    res.end(JSON.stringify({
-      billCode,
+    sendJson(res, 200, {
+      billCode: parsed.billCode,
       referenceNo,
-      paymentUrl: `${TOYYIBPAY_BASE_URL}/${billCode}`
-    }));
+      paymentUrl: `${TOYYIBPAY_BASE_URL}/${parsed.billCode}`
+    });
   } catch (error) {
-    res.statusCode = 500;
-    res.end(JSON.stringify({
+    sendJson(res, 500, {
       message: 'Server error semasa menghubungi ToyyibPay.',
       details: error.message
-    }));
+    });
   }
 };
