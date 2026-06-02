@@ -205,7 +205,7 @@ function buildToyyibPayParams({ product, referenceNo, name, email, phone }) {
   appendParam(params, 'billPriceSetting', '1');
   appendParam(params, 'billPayorInfo', '1');
   appendParam(params, 'billAmount', product.amountCents);
-  appendParam(params, 'billReturnUrl', `${SITE_URL}/`);
+  appendParam(params, 'billReturnUrl', `${SITE_URL}/payment-successfull.html`);
   appendParam(params, 'billCallbackUrl', `${SITE_URL}/api/toyyibpayfallback`);
   appendParam(params, 'billExternalReferenceNo', referenceNo);
   appendParam(params, 'billTo', name);
