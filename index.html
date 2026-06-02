@@ -11,13 +11,7 @@
   <meta property="og:title" content="Teroka Minda — Ebook Pembelajaran Kanak-Kanak" />
   <meta property="og:description" content="Bantu anak belajar melalui aktiviti yang menyeronokkan, kemas dan mudah ikut di rumah." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://terokaminda.com" />
-
-  <!--
-    Integrasi tracking & payment disediakan dalam api.js.
-    Letakkan api.js di folder yang sama dengan file ini.
-  -->
-  <script defer src="api.js"></script>
+  <meta property="og:url" content="https://terokaminda-edu.vercel.app/" />
 
   <style>
     :root {
@@ -1041,7 +1035,7 @@
           <article class="card">
             <div class="icon">1</div>
             <h3>Beli ebook</h3>
-            <p>Selepas pembayaran selesai, pembeli boleh menerima akses digital mengikut sistem penghantaran anda.</p>
+            <p>Selepas pembayaran selesai nanti, pembeli boleh menerima akses digital mengikut setup payment gateway anda.</p>
           </article>
           <article class="card">
             <div class="icon">2</div>
@@ -1112,7 +1106,7 @@
           <a class="btn btn-primary" style="width:100%;" href="#checkout-form" data-track="price_cta">Beli Sekarang</a>
 
           <ul class="checklist">
-            <li>Akses ebook digital boleh dihantar selepas status bayaran berjaya disahkan.</li>
+            <li>Akses ebook digital selepas bayaran ToyyibPay selesai.</li>
             <li>Sesuai untuk ibu bapa yang mahu bahan belajar lebih tersusun.</li>
             <li>Boleh digunakan sebagai aktiviti tambahan di rumah.</li>
             <li>Tiada janji ajaib — tetapi membantu anda mula dengan lebih mudah.</li>
@@ -1126,7 +1120,7 @@
         <form id="checkout-form" class="order-form" novalidate>
           <div class="eyebrow">🔒 Borang tempahan</div>
           <h2 style="font-size:clamp(1.65rem,3vw,2.55rem);">Isi maklumat pembeli</h2>
-          <p class="small" style="margin:10px 0 20px;">Selepas klik, sistem akan cipta bill ToyyibPay dan bawa pembeli ke halaman pembayaran rasmi ToyyibPay.</p>
+          <p class="small" style="margin:10px 0 20px;">Pembayaran akan diproses melalui ToyyibPay secara selamat selepas maklumat pembeli dihantar.</p>
 
           <div class="form-grid">
             <div class="field">
@@ -1150,7 +1144,7 @@
           </div>
 
           <button type="submit" class="btn btn-primary" style="width:100%; margin-top:18px;" data-track="form_submit">Teruskan Ke Pembayaran</button>
-          <p class="form-note">Dengan meneruskan, pembeli akan dibawa ke ToyyibPay untuk melengkapkan bayaran secara selamat.</p>
+          <p class="form-note">Dengan meneruskan, anda akan dibawa ke halaman pembayaran ToyyibPay.</p>
         </form>
       </div>
     </section>
@@ -1200,7 +1194,7 @@
     <div class="container footer-grid">
       <div>
         <strong>Teroka MINDA EDU</strong><br />
-        <span>terokaminda.com</span>
+        <span>terokaminda-edu.vercel.app</span>
       </div>
       <div>
         <span>© <span id="year"></span> Teroka Minda. Semua hak cipta terpelihara.</span>
@@ -1221,6 +1215,74 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script>
+    (function () {
+      const PAYMENT_ENDPOINT = '/api/createbill';
+      const SITE_URL = 'https://terokaminda-edu.vercel.app/';
+      const PRODUCT_NAME = 'Teroka Minda Ebook';
+      const DEFAULT_AMOUNT = 29.00;
+      const CURRENCY = 'MYR';
+
+      function track(eventName, payload) {
+        const data = Object.assign({
+          product: PRODUCT_NAME,
+          currency: CURRENCY,
+          value: DEFAULT_AMOUNT,
+          website: SITE_URL
+        }, payload || {});
+
+        try {
+          if (window.fbq) window.fbq('trackCustom', eventName, data);
+          if (window.gtag) window.gtag('event', eventName, data);
+          if (window.ttq && typeof window.ttq.track === 'function') window.ttq.track(eventName, data);
+        } catch (error) {
+          console.warn('Tracking error:', error);
+        }
+      }
+
+      async function checkout(payload) {
+        track('InitiateCheckout', {
+          value: Number(payload?.amount || DEFAULT_AMOUNT),
+          currency: payload?.currency || CURRENCY,
+          package: payload?.package || 'teroka-minda-ebook'
+        });
+
+        const response = await fetch(PAYMENT_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload || {})
+        });
+
+        let result;
+        const responseText = await response.text();
+        try {
+          result = responseText ? JSON.parse(responseText) : {};
+        } catch (error) {
+          throw new Error('Server tidak memberi respons JSON yang sah. Respons: ' + responseText.slice(0, 180));
+        }
+
+        if (!response.ok || !result.paymentUrl) {
+          const detail = typeof result.details === 'string'
+            ? result.details
+            : result.details
+              ? JSON.stringify(result.details)
+              : '';
+          const message = result.message || 'Gagal cipta bill ToyyibPay.';
+          throw new Error(detail ? message + ' Detail: ' + detail.slice(0, 240) : message);
+        }
+
+        track('ToyyibPayBillCreated', {
+          billCode: result.billCode,
+          referenceNo: result.referenceNo,
+          value: Number(payload?.amount || DEFAULT_AMOUNT),
+          currency: payload?.currency || CURRENCY
+        });
+
+        window.location.href = result.paymentUrl;
+      }
+
+      window.TerokaMindaAPI = { track, checkout };
+    })();
+
     document.addEventListener('DOMContentLoaded', function () {
       const year = document.getElementById('year');
       if (year) year.textContent = new Date().getFullYear();
@@ -1235,39 +1297,29 @@
       toggleSticky();
       window.addEventListener('scroll', toggleSticky, { passive: true });
 
-      // Init tracking placeholder dalam api.js
-      if (window.TerokaMindaAPI) {
-        window.TerokaMindaAPI.init({
-          productName: 'Teroka Minda Ebook',
-          currency: 'MYR',
-          defaultAmount: 29.00,
-          website: 'https://terokaminda.com',
-          // Isi ID sebenar bila sudah sedia:
-          tracking: {
-            metaPixelId: '',
-            googleAnalyticsId: '',
-            tiktokPixelId: ''
-          },
-          payment: {
-            provider: 'toyyibpay',
-            endpoint: '/api/create-bill'
-          }
-        });
-
-        window.TerokaMindaAPI.track('PageView', {
-          page: 'landing_page',
-          product: 'Teroka Minda Ebook'
-        });
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnedStatus = urlParams.get('status_id') || urlParams.get('status');
+      const returnedBillCode = urlParams.get('billcode') || urlParams.get('billCode');
+      if (returnedStatus) {
+        const statusText = returnedStatus === '1'
+          ? 'Pembayaran berjaya. Terima kasih atas pembelian anda.'
+          : returnedStatus === '2'
+            ? 'Pembayaran masih pending. Sila semak semula sebentar lagi.'
+            : 'Pembayaran tidak berjaya atau dibatalkan.';
+        showToast(returnedBillCode ? statusText + ' Bill: ' + returnedBillCode : statusText);
       }
+
+      window.TerokaMindaAPI.track('PageView', {
+        page: 'landing_page',
+        product: 'Teroka Minda Ebook'
+      });
 
       document.querySelectorAll('[data-track]').forEach(function (el) {
         el.addEventListener('click', function () {
-          if (window.TerokaMindaAPI) {
-            window.TerokaMindaAPI.track('ClickCTA', {
-              placement: el.getAttribute('data-track'),
-              text: (el.textContent || '').trim()
-            });
-          }
+          window.TerokaMindaAPI.track('ClickCTA', {
+            placement: el.getAttribute('data-track'),
+            text: (el.textContent || '').trim()
+          });
         });
       });
 
@@ -1278,6 +1330,13 @@
         if (!form.checkValidity()) {
           form.reportValidity();
           return;
+        }
+
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton ? submitButton.textContent : '';
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = 'Mencipta bil ToyyibPay...';
         }
 
         const formData = new FormData(form);
@@ -1293,10 +1352,13 @@
         };
 
         try {
-          if (!window.TerokaMindaAPI) throw new Error('api.js tidak dimuatkan.');
           await window.TerokaMindaAPI.checkout(payload);
         } catch (error) {
           showToast(error.message || 'Maaf, ada masalah teknikal. Sila cuba lagi.');
+          if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+          }
         }
       });
     });
@@ -1309,7 +1371,7 @@
       window.clearTimeout(window.__toastTimer);
       window.__toastTimer = window.setTimeout(function () {
         toast.classList.remove('show');
-      }, 5200);
+      }, 7200);
     }
   </script>
 </body>
