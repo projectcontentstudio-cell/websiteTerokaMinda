@@ -1041,7 +1041,7 @@
           <article class="card">
             <div class="icon">1</div>
             <h3>Beli ebook</h3>
-            <p>Selepas pembayaran selesai nanti, pembeli boleh menerima akses digital mengikut setup payment gateway anda.</p>
+            <p>Selepas pembayaran selesai, pembeli boleh menerima akses digital mengikut sistem penghantaran anda.</p>
           </article>
           <article class="card">
             <div class="icon">2</div>
@@ -1112,7 +1112,7 @@
           <a class="btn btn-primary" style="width:100%;" href="#checkout-form" data-track="price_cta">Beli Sekarang</a>
 
           <ul class="checklist">
-            <li>Akses ebook digital selepas payment gateway siap disambungkan.</li>
+            <li>Akses ebook digital boleh dihantar selepas status bayaran berjaya disahkan.</li>
             <li>Sesuai untuk ibu bapa yang mahu bahan belajar lebih tersusun.</li>
             <li>Boleh digunakan sebagai aktiviti tambahan di rumah.</li>
             <li>Tiada janji ajaib — tetapi membantu anda mula dengan lebih mudah.</li>
@@ -1126,7 +1126,7 @@
         <form id="checkout-form" class="order-form" novalidate>
           <div class="eyebrow">🔒 Borang tempahan</div>
           <h2 style="font-size:clamp(1.65rem,3vw,2.55rem);">Isi maklumat pembeli</h2>
-          <p class="small" style="margin:10px 0 20px;">Payment gateway akan disambung kemudian melalui <code>api.js</code>. Sekarang borang ini sudah sedia untuk tracking dan integrasi.</p>
+          <p class="small" style="margin:10px 0 20px;">Selepas klik, sistem akan cipta bill ToyyibPay dan bawa pembeli ke halaman pembayaran rasmi ToyyibPay.</p>
 
           <div class="form-grid">
             <div class="field">
@@ -1150,7 +1150,7 @@
           </div>
 
           <button type="submit" class="btn btn-primary" style="width:100%; margin-top:18px;" data-track="form_submit">Teruskan Ke Pembayaran</button>
-          <p class="form-note">Dengan meneruskan, pembeli akan dibawa ke payment gateway selepas integrasi dibuat. Anda boleh ubah teks ini mengikut polisi sebenar.</p>
+          <p class="form-note">Dengan meneruskan, pembeli akan dibawa ke ToyyibPay untuk melengkapkan bayaran secara selamat.</p>
         </form>
       </div>
     </section>
@@ -1249,8 +1249,8 @@
             tiktokPixelId: ''
           },
           payment: {
-            provider: 'setup_later',
-            endpoint: '/api/create-payment'
+            provider: 'toyyibpay',
+            endpoint: '/api/create-bill'
           }
         });
 

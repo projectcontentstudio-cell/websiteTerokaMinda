@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Status Pembayaran — Teroka Minda</title>
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5fbf8; color: #10231f; display: grid; place-items: center; min-height: 100vh; padding: 24px; }
+    main { width: min(680px, 100%); background: #fff; border: 1px solid #d9e8e2; border-radius: 28px; padding: 32px; box-shadow: 0 20px 50px rgba(15, 118, 110, .14); }
+    h1 { margin: 0; line-height: 1.1; font-size: clamp(2rem, 5vw, 3.3rem); }
+    p { color: #52645f; font-size: 1.05rem; line-height: 1.6; }
+    .badge { display: inline-flex; border-radius: 999px; padding: 8px 12px; background: #dff7ef; color: #0b5f59; font-weight: 800; margin-bottom: 14px; }
+    a { display: inline-flex; margin-top: 18px; border-radius: 999px; background: #f59e0b; color: #3a2300; padding: 13px 20px; text-decoration: none; font-weight: 900; }
+    code { background: #eefbf6; padding: 3px 6px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="badge" class="badge">Status pembayaran</div>
+    <h1 id="title">Menyemak status pembayaran...</h1>
+    <p id="message">Sila tunggu sebentar.</p>
+    <p id="reference"></p>
+    <a href="/">Kembali ke laman utama</a>
+  </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('status_id');
+    const orderId = params.get('order_id');
+    const billcode = params.get('billcode');
+
+    const title = document.getElementById('title');
+    const message = document.getElementById('message');
+    const badge = document.getElementById('badge');
+    const reference = document.getElementById('reference');
+
+    if (status === '1') {
+      badge.textContent = 'Bayaran berjaya';
+      title.textContent = 'Terima kasih! Pembayaran anda berjaya.';
+      message.textContent = 'Kami sudah menerima pulangan status daripada ToyyibPay. Seterusnya, sistem anda boleh menghantar akses ebook kepada pembeli.';
+    } else if (status === '2') {
+      badge.textContent = 'Bayaran pending';
+      title.textContent = 'Pembayaran masih dalam proses.';
+      message.textContent = 'Status bayaran masih pending. Sila semak semula selepas beberapa minit atau tunggu pengesahan daripada ToyyibPay.';
+    } else if (status === '3') {
+      badge.textContent = 'Bayaran gagal';
+      title.textContent = 'Pembayaran tidak berjaya.';
+      message.textContent = 'Transaksi tidak berjaya. Anda boleh cuba semula dari laman utama.';
+    } else {
+      badge.textContent = 'Status tidak pasti';
+      title.textContent = 'Status pembayaran belum dapat disahkan.';
+      message.textContent = 'Sila rujuk emel atau halaman ToyyibPay anda untuk pengesahan lanjut.';
+    }
+
+    if (orderId || billcode) {
+      reference.innerHTML = `Rujukan: ${orderId ? `<code>${orderId}</code>` : ''} ${billcode ? `<code>${billcode}</code>` : ''}`;
+    }
+  </script>
+</body>
+</html>
