@@ -1,0 +1,1316 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teroka Minda — Ebook Pembelajaran Kanak-Kanak</title>
+  <meta name="description" content="Ebook aktiviti pembelajaran kanak-kanak yang membantu anak belajar dengan lebih seronok, tersusun dan mudah diamalkan di rumah." />
+  <meta name="theme-color" content="#0f766e" />
+
+  <!-- Open Graph untuk Meta Ads / WhatsApp Preview -->
+  <meta property="og:title" content="Teroka Minda — Ebook Pembelajaran Kanak-Kanak" />
+  <meta property="og:description" content="Bantu anak belajar melalui aktiviti yang menyeronokkan, kemas dan mudah ikut di rumah." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://terokaminda.com" />
+
+  <!--
+    Integrasi tracking & payment disediakan dalam api.js.
+    Letakkan api.js di folder yang sama dengan file ini.
+  -->
+  <script defer src="api.js"></script>
+
+  <style>
+    :root {
+      --bg: #f5fbf8;
+      --surface: #ffffff;
+      --surface-soft: #eefbf6;
+      --ink: #10231f;
+      --muted: #52645f;
+      --brand: #0f766e;
+      --brand-dark: #0b5f59;
+      --brand-soft: #dff7ef;
+      --accent: #f59e0b;
+      --accent-dark: #d97706;
+      --danger-soft: #fff1f2;
+      --danger: #be123c;
+      --line: #d9e8e2;
+      --shadow: 0 20px 50px rgba(15, 118, 110, .14);
+      --shadow-soft: 0 14px 35px rgba(16, 35, 31, .08);
+      --radius: 24px;
+      --radius-sm: 16px;
+      --container: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(245, 158, 11, .18), transparent 28rem),
+        radial-gradient(circle at 85% 10%, rgba(15, 118, 110, .18), transparent 24rem),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button, input, select, textarea { font: inherit; }
+
+    .container {
+      width: min(var(--container), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: 12px;
+      background: var(--ink);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      z-index: 100;
+    }
+
+    .skip-link:focus { left: 12px; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(16px);
+      background: rgba(245, 251, 248, .78);
+      border-bottom: 1px solid rgba(217, 232, 226, .8);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: max-content;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--brand), #12b886);
+      color: #fff;
+      font-weight: 900;
+      box-shadow: 0 10px 28px rgba(15, 118, 110, .22);
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 1.02rem;
+      line-height: 1.1;
+    }
+
+    .brand span {
+      display: block;
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: .94rem;
+    }
+
+    .nav-links a:hover { color: var(--brand); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 20px;
+      min-height: 48px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      text-align: center;
+      user-select: none;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn:focus-visible { outline: 4px solid rgba(245, 158, 11, .32); outline-offset: 3px; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #fbbf24);
+      color: #3a2300;
+      box-shadow: 0 12px 26px rgba(245, 158, 11, .28);
+    }
+
+    .btn-primary:hover { box-shadow: 0 16px 34px rgba(245, 158, 11, .34); }
+
+    .btn-secondary {
+      background: var(--ink);
+      color: #fff;
+      box-shadow: 0 12px 26px rgba(16, 35, 31, .18);
+    }
+
+    .btn-ghost {
+      background: #fff;
+      color: var(--brand-dark);
+      border: 1px solid var(--line);
+    }
+
+    .hero {
+      padding: 56px 0 42px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.06fr) minmax(320px, .94fr);
+      align-items: center;
+      gap: 42px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 118, 110, .10);
+      color: var(--brand-dark);
+      border: 1px solid rgba(15, 118, 110, .16);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: .9rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    h1, h2, h3 { line-height: 1.08; margin: 0; letter-spacing: -.04em; }
+
+    h1 {
+      font-size: clamp(2.35rem, 5.2vw, 5.35rem);
+      max-width: 860px;
+    }
+
+    .highlight {
+      color: var(--brand);
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .hero p.lead {
+      font-size: clamp(1.08rem, 2vw, 1.35rem);
+      color: var(--muted);
+      max-width: 680px;
+      margin: 22px 0 0;
+    }
+
+    .lead strong { color: var(--ink); }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .microcopy {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: .93rem;
+    }
+
+    .microcopy span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-card {
+      position: relative;
+      background: linear-gradient(180deg, #ffffff, #f2fbf8);
+      border: 1px solid rgba(217, 232, 226, .9);
+      border-radius: 34px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: -80px -80px auto auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, .18);
+      z-index: -1;
+    }
+
+    .ebook-mockup {
+      background: linear-gradient(135deg, #0f766e, #22c55e 52%, #fbbf24);
+      color: #fff;
+      min-height: 430px;
+      border-radius: 28px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 20px 22px 0 rgba(15, 118, 110, .11), inset 0 0 0 1px rgba(255,255,255,.28);
+      transform: rotate(1.2deg);
+    }
+
+    .ebook-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: .8rem;
+    }
+
+    .ebook-title {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: .98;
+      letter-spacing: -.05em;
+      font-weight: 950;
+      margin-top: 34px;
+    }
+
+    .ebook-subtitle {
+      font-size: 1.05rem;
+      max-width: 330px;
+      opacity: .94;
+      margin-top: 12px;
+    }
+
+    .ebook-badges {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 32px;
+    }
+
+    .ebook-badge {
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 16px;
+      padding: 12px;
+      font-size: .86rem;
+      font-weight: 800;
+    }
+
+    .floating-note {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      max-width: 250px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: var(--shadow-soft);
+      color: var(--ink);
+      font-size: .92rem;
+    }
+
+    .section {
+      padding: 64px 0;
+    }
+
+    .section-alt {
+      background: rgba(255,255,255,.62);
+      border-block: 1px solid rgba(217, 232, 226, .65);
+    }
+
+    .section-head {
+      max-width: 770px;
+      margin: 0 auto 34px;
+      text-align: center;
+    }
+
+    .section-head h2 {
+      font-size: clamp(1.9rem, 4vw, 3.4rem);
+    }
+
+    .section-head p {
+      margin: 16px auto 0;
+      color: var(--muted);
+      font-size: 1.07rem;
+      max-width: 690px;
+    }
+
+    .pain-grid,
+    .benefit-grid,
+    .steps-grid,
+    .bonus-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(217, 232, 226, .9);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card h3 {
+      font-size: 1.22rem;
+      margin-top: 14px;
+      letter-spacing: -.02em;
+    }
+
+    .card p {
+      margin: 10px 0 0;
+      color: var(--muted);
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: var(--brand-soft);
+      color: var(--brand-dark);
+      font-size: 1.35rem;
+      font-weight: 900;
+    }
+
+    .impact {
+      background: linear-gradient(135deg, var(--ink), #0f3b35);
+      color: #fff;
+      border-radius: 36px;
+      padding: clamp(26px, 5vw, 52px);
+      display: grid;
+      grid-template-columns: 1fr .84fr;
+      gap: 28px;
+      align-items: center;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .impact::after {
+      content: "";
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      border-radius: 999px;
+      right: -120px;
+      top: -140px;
+      background: rgba(245, 158, 11, .22);
+    }
+
+    .impact h2 {
+      font-size: clamp(2rem, 4.4vw, 4.2rem);
+      position: relative;
+      z-index: 1;
+    }
+
+    .impact p {
+      color: rgba(255,255,255,.78);
+      font-size: 1.08rem;
+      margin: 16px 0 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .impact-list {
+      display: grid;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .impact-item {
+      display: flex;
+      gap: 12px;
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .impact-item span {
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #3a2300;
+      font-weight: 900;
+    }
+
+    .product-showcase {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .inside-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .inside-item {
+      background: var(--surface-soft);
+      border: 1px solid rgba(15, 118, 110, .14);
+      border-radius: 18px;
+      padding: 16px;
+      font-weight: 750;
+    }
+
+    .preview-card {
+      background: linear-gradient(180deg, #fff, #f0fbf7);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: 20px;
+      box-shadow: var(--shadow-soft);
+      min-height: 100%;
+    }
+
+    .worksheet {
+      background: #fff;
+      border: 1px dashed rgba(15, 118, 110, .38);
+      border-radius: 24px;
+      padding: 18px;
+      min-height: 350px;
+    }
+
+    .worksheet-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .worksheet-title strong { font-size: 1.1rem; }
+
+    .worksheet-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .worksheet-box {
+      aspect-ratio: 1;
+      border-radius: 18px;
+      background: var(--brand-soft);
+      display: grid;
+      place-items: center;
+      font-size: 1.9rem;
+      font-weight: 900;
+      color: var(--brand-dark);
+    }
+
+    .worksheet-line {
+      height: 12px;
+      background: #edf5f2;
+      border-radius: 999px;
+      margin: 14px 0;
+    }
+
+    .worksheet-line.short { width: 68%; }
+
+    .value-stack {
+      display: grid;
+      gap: 14px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .value-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: 0 8px 24px rgba(16, 35, 31, .05);
+    }
+
+    .value-row strong { display: block; }
+    .value-row span { color: var(--muted); font-size: .94rem; }
+    .value-price { font-weight: 950; color: var(--brand-dark); }
+
+    .pricing-wrap {
+      display: grid;
+      grid-template-columns: .92fr 1.08fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .price-card {
+      position: relative;
+      background: #fff;
+      border: 2px solid rgba(245, 158, 11, .42);
+      border-radius: 34px;
+      padding: clamp(24px, 4vw, 38px);
+      box-shadow: 0 24px 60px rgba(245, 158, 11, .16);
+      overflow: hidden;
+    }
+
+    .price-card::before {
+      content: "Pakej Digital";
+      position: absolute;
+      top: 18px;
+      right: -44px;
+      transform: rotate(35deg);
+      background: var(--accent);
+      color: #3a2300;
+      font-weight: 950;
+      padding: 8px 48px;
+      font-size: .82rem;
+    }
+
+    .price-label {
+      color: var(--brand-dark);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: .84rem;
+    }
+
+    .price {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      margin: 12px 0 8px;
+    }
+
+    .price .currency { font-size: 1.6rem; font-weight: 900; margin-bottom: 12px; }
+    .price .amount { font-size: clamp(4rem, 9vw, 6.7rem); line-height: .9; font-weight: 950; letter-spacing: -.08em; }
+    .price .cents { font-size: 1.35rem; font-weight: 900; margin-bottom: 14px; color: var(--muted); }
+
+    .was-price {
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .was-price s { color: #8a9894; }
+
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0 0;
+      display: grid;
+      gap: 11px;
+    }
+
+    .checklist li {
+      display: flex;
+      gap: 10px;
+      color: var(--muted);
+    }
+
+    .checklist li::before {
+      content: "✓";
+      flex: 0 0 auto;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--brand-dark);
+      font-weight: 950;
+    }
+
+    .guarantee {
+      background: var(--surface-soft);
+      border: 1px solid rgba(15, 118, 110, .16);
+      border-radius: 22px;
+      padding: 18px;
+      margin-top: 18px;
+    }
+
+    .order-form {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: clamp(20px, 4vw, 30px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .form-grid { display: grid; gap: 14px; }
+
+    .field label {
+      display: block;
+      font-weight: 850;
+      font-size: .9rem;
+      margin-bottom: 7px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 13px 14px;
+      background: #fbfffd;
+      outline: none;
+      min-height: 50px;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, .10);
+    }
+
+    .form-note {
+      font-size: .9rem;
+      color: var(--muted);
+      margin: 12px 0 0;
+    }
+
+    .faq {
+      max-width: 860px;
+      margin: 0 auto;
+      display: grid;
+      gap: 12px;
+    }
+
+    details {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: 0 10px 24px rgba(16, 35, 31, .05);
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 900;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--brand); font-size: 1.35rem; line-height: 1; }
+    details[open] summary::after { content: "–"; }
+    details p { color: var(--muted); margin: 12px 0 0; }
+
+    .final-cta {
+      text-align: center;
+      background: linear-gradient(135deg, #0f766e, #0b5f59);
+      color: #fff;
+      border-radius: 34px;
+      padding: clamp(28px, 6vw, 58px);
+      box-shadow: var(--shadow);
+    }
+
+    .final-cta h2 { font-size: clamp(2rem, 5vw, 4rem); }
+    .final-cta p { color: rgba(255,255,255,.82); max-width: 670px; margin: 16px auto 24px; }
+
+    .footer {
+      padding: 34px 0 92px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--line);
+      padding-top: 24px;
+    }
+
+    .sticky-cta {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 40;
+      background: rgba(255,255,255,.9);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--line);
+      box-shadow: 0 -16px 40px rgba(16, 35, 31, .08);
+      transform: translateY(110%);
+      transition: transform .24s ease;
+    }
+
+    .sticky-cta.show { transform: translateY(0); }
+
+    .sticky-inner {
+      width: min(var(--container), calc(100% - 24px));
+      margin: 0 auto;
+      padding: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .sticky-inner strong { display: block; line-height: 1.15; }
+    .sticky-inner span { color: var(--muted); font-size: .86rem; }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 86px;
+      z-index: 60;
+      width: min(410px, calc(100% - 36px));
+      background: var(--ink);
+      color: #fff;
+      border-radius: 18px;
+      padding: 15px 16px;
+      box-shadow: 0 18px 45px rgba(16, 35, 31, .26);
+      display: none;
+    }
+
+    .toast.show { display: block; animation: fadeUp .22s ease both; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .small { font-size: .9rem; color: var(--muted); }
+    .center { text-align: center; }
+
+    @media (max-width: 940px) {
+      .hero-grid,
+      .impact,
+      .product-showcase,
+      .pricing-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .hero { padding-top: 36px; }
+      .nav-links { display: none; }
+      .ebook-mockup { min-height: 380px; }
+      .floating-note { position: relative; right: auto; bottom: auto; margin-top: 16px; max-width: 100%; }
+    }
+
+    @media (max-width: 760px) {
+      .pain-grid,
+      .benefit-grid,
+      .steps-grid,
+      .bonus-grid,
+      .inside-list {
+        grid-template-columns: 1fr;
+      }
+
+      .section { padding: 48px 0; }
+      .hero-actions .btn { width: 100%; }
+      .sticky-inner .btn { min-height: 44px; padding: 10px 15px; }
+      .sticky-inner > div { max-width: 54%; }
+      .value-row { grid-template-columns: 1fr; gap: 8px; }
+      .worksheet-row { grid-template-columns: repeat(2, 1fr); }
+      .price-card::before { top: 14px; right: -52px; }
+      .footer { padding-bottom: 104px; }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#order">Terus ke borang pembelian</a>
+
+  <header class="topbar">
+    <div class="container nav">
+      <a href="#top" class="brand" aria-label="Teroka Minda">
+        <div class="brand-mark">TM</div>
+        <div>
+          <strong>Teroka Minda</strong>
+          <span>Ebook Pembelajaran Kanak-Kanak</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" aria-label="Navigasi utama">
+        <a href="#masalah">Masalah</a>
+        <a href="#kandungan">Kandungan</a>
+        <a href="#nilai">Nilai</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <a class="btn btn-secondary" href="#order" data-track="nav_cta">Beli Ebook</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">✨ Untuk ibu bapa yang mahu anak belajar dengan lebih seronok</div>
+          <h1>Jadikan masa belajar anak lebih <span class="highlight">mudah, tersusun</span> dan tidak membosankan.</h1>
+          <p class="lead">
+            <strong>Teroka Minda</strong> ialah ebook aktiviti pembelajaran kanak-kanak yang direka supaya ibu bapa boleh bantu anak belajar di rumah tanpa perlu pening cari idea setiap hari.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#order" data-track="hero_cta">Ya, Saya Nak Ebook Ini</a>
+            <a class="btn btn-ghost" href="#kandungan" data-track="hero_preview">Lihat Kandungan</a>
+          </div>
+
+          <div class="microcopy" aria-label="Kelebihan ringkas">
+            <span>✅ Format digital</span>
+            <span>✅ Aktiviti mudah ikut</span>
+            <span>✅ Sesuai untuk rutin belajar di rumah</span>
+          </div>
+        </div>
+
+        <aside class="hero-card" aria-label="Mockup ebook Teroka Minda">
+          <div class="ebook-mockup">
+            <div>
+              <div class="ebook-top"><span>Teroka Minda</span><span>Digital Ebook</span></div>
+              <div class="ebook-title">Aktiviti Belajar Anak Yang Seronok</div>
+              <div class="ebook-subtitle">Latihan ringkas, visual menarik dan idea aktiviti yang boleh dibuat bersama anak.</div>
+            </div>
+            <div class="ebook-badges">
+              <div class="ebook-badge">Huruf & Nombor</div>
+              <div class="ebook-badge">Fokus & Motor Halus</div>
+              <div class="ebook-badge">Warna & Bentuk</div>
+              <div class="ebook-badge">Aktiviti Harian</div>
+            </div>
+          </div>
+          <div class="floating-note"><strong>Impak utama:</strong> anak bukan sekadar “buat latihan”, tetapi mula bina rutin belajar yang positif dari rumah.</div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="masalah" class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <h2>Anak cepat bosan belajar? Selalunya bukan sebab anak malas.</h2>
+          <p>Kadangkala anak perlukan aktiviti yang lebih visual, lebih pendek, dan lebih mudah dicapai supaya mereka rasa belajar itu menyeronokkan.</p>
+        </div>
+
+        <div class="pain-grid">
+          <article class="card">
+            <div class="icon">😵</div>
+            <h3>Ibu bapa pening cari bahan</h3>
+            <p>Hari ini cari lembaran kerja, esok cari idea aktiviti lain. Akhirnya masa habis mencari, bukan membimbing.</p>
+          </article>
+          <article class="card">
+            <div class="icon">📱</div>
+            <h3>Anak mudah tertarik skrin</h3>
+            <p>Tanpa bahan yang menarik, anak lebih mudah hilang fokus dan minta hiburan segera.</p>
+          </article>
+          <article class="card">
+            <div class="icon">⏳</div>
+            <h3>Rutin belajar tidak konsisten</h3>
+            <p>Bila aktiviti tidak tersusun, ibu bapa sukar kekalkan momentum belajar anak dari minggu ke minggu.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container impact">
+        <div>
+          <h2>Kenapa ebook ini berbaloi untuk dibeli?</h2>
+          <p>
+            Kerana nilai sebenar bukan hanya pada helaian aktiviti. Nilainya ialah pada masa yang anda jimat, idea yang sudah tersusun, dan peluang untuk membina hubungan belajar yang lebih positif dengan anak.
+          </p>
+        </div>
+        <div class="impact-list">
+          <div class="impact-item"><span>1</span><div><strong>Jimat masa ibu bapa</strong><br />Tidak perlu mula dari kosong setiap kali mahu ajar anak.</div></div>
+          <div class="impact-item"><span>2</span><div><strong>Bantu anak belajar secara aktif</strong><br />Aktiviti direka supaya anak menulis, memerhati, memadankan, mewarna dan berfikir.</div></div>
+          <div class="impact-item"><span>3</span><div><strong>Bina rutin kecil yang konsisten</strong><br />Mulakan dengan 10–15 minit sehari supaya belajar tidak terasa berat.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <h2>Apa yang anak boleh dapat daripada Teroka Minda?</h2>
+          <p>Fokus kepada aktiviti asas yang membantu perkembangan awal anak melalui latihan yang mudah difahami dan mesra ibu bapa.</p>
+        </div>
+
+        <div class="benefit-grid">
+          <article class="card">
+            <div class="icon">🔤</div>
+            <h3>Kenal huruf & perkataan asas</h3>
+            <p>Aktiviti visual untuk bantu anak mengecam huruf, bunyi, dan perkataan harian dengan lebih yakin.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🔢</div>
+            <h3>Kenal nombor & kiraan mudah</h3>
+            <p>Latihan ringkas untuk membiasakan anak dengan nombor, kuantiti, padanan dan susunan.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🎨</div>
+            <h3>Warna, bentuk & fokus</h3>
+            <p>Aktiviti mewarna, memadankan dan mencari pola untuk menggalakkan fokus serta pemerhatian.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="kandungan" class="section">
+      <div class="container product-showcase">
+        <div class="preview-card">
+          <div class="worksheet" aria-label="Contoh visual lembaran aktiviti">
+            <div class="worksheet-title">
+              <strong>Contoh Aktiviti</strong>
+              <span class="small">Pratonton visual</span>
+            </div>
+            <div class="worksheet-line short"></div>
+            <div class="worksheet-row">
+              <div class="worksheet-box">A</div>
+              <div class="worksheet-box">B</div>
+              <div class="worksheet-box">1</div>
+              <div class="worksheet-box">2</div>
+            </div>
+            <div class="worksheet-line"></div>
+            <div class="worksheet-line short"></div>
+            <div class="worksheet-row">
+              <div class="worksheet-box">★</div>
+              <div class="worksheet-box">●</div>
+              <div class="worksheet-box">▲</div>
+              <div class="worksheet-box">■</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="eyebrow">📚 Kandungan dalam ebook</div>
+          <h2>Semua disusun supaya anda boleh terus guna.</h2>
+          <p class="small" style="font-size:1.05rem; margin:16px 0 22px; max-width:640px;">
+            Tidak perlu susun sendiri dari pelbagai sumber. Buka ebook, pilih aktiviti, bimbing anak langkah demi langkah.
+          </p>
+
+          <div class="inside-list">
+            <div class="inside-item">Latihan huruf dan pra-menulis</div>
+            <div class="inside-item">Aktiviti nombor dan padanan</div>
+            <div class="inside-item">Aktiviti warna dan bentuk</div>
+            <div class="inside-item">Latihan fokus dan pemerhatian</div>
+            <div class="inside-item">Idea aktiviti ringkas di rumah</div>
+            <div class="inside-item">Panduan guna untuk ibu bapa</div>
+          </div>
+
+          <div style="margin-top:24px;">
+            <a class="btn btn-primary" href="#order" data-track="content_cta">Dapatkan Ebook Sekarang</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <h2>Cara guna sangat mudah.</h2>
+          <p>Direka untuk ibu bapa sibuk yang tetap mahu beri pengalaman belajar yang berkualiti di rumah.</p>
+        </div>
+
+        <div class="steps-grid">
+          <article class="card">
+            <div class="icon">1</div>
+            <h3>Beli ebook</h3>
+            <p>Selepas pembayaran selesai nanti, pembeli boleh menerima akses digital mengikut setup payment gateway anda.</p>
+          </article>
+          <article class="card">
+            <div class="icon">2</div>
+            <h3>Pilih aktiviti</h3>
+            <p>Mulakan dengan aktiviti pendek yang sesuai dengan tahap anak. Tidak perlu habiskan banyak halaman sekaligus.</p>
+          </article>
+          <article class="card">
+            <div class="icon">3</div>
+            <h3>Bimbing 10–15 minit</h3>
+            <p>Jadikan sesi belajar ringkas, positif dan konsisten supaya anak tidak rasa terpaksa.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="nilai" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Nilai yang anda dapat jauh lebih besar daripada harga ebook.</h2>
+          <p>Berbanding membeli banyak buku latihan secara berasingan atau habiskan masa mencari bahan rawak, ebook ini memberi struktur yang lebih mudah digunakan.</p>
+        </div>
+
+        <div class="value-stack">
+          <div class="value-row"><div><strong>Ebook aktiviti pembelajaran kanak-kanak</strong><span>Bahan utama yang boleh digunakan berulang kali secara digital.</span></div><div class="value-price">Bernilai RM39</div></div>
+          <div class="value-row"><div><strong>Panduan ringkas untuk ibu bapa</strong><span>Cadangan cara guna supaya sesi belajar lebih lancar.</span></div><div class="value-price">Bernilai RM19</div></div>
+          <div class="value-row"><div><strong>Idea rutin belajar 10–15 minit</strong><span>Membantu anda kekalkan konsistensi tanpa rasa terbeban.</span></div><div class="value-price">Bernilai RM19</div></div>
+          <div class="value-row"><div><strong>Bahan digital yang mudah akses</strong><span>Simpan di telefon, tablet atau laptop dan guna bila diperlukan.</span></div><div class="value-price">Bernilai RM29</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <h2>Bonus untuk buat pembelian rasa lebih lengkap.</h2>
+          <p>Bonus ini boleh diganti atau ditambah mengikut produk sebenar anda. Struktur ini sudah disediakan untuk conversion.</p>
+        </div>
+
+        <div class="bonus-grid">
+          <article class="card">
+            <div class="icon">🎁</div>
+            <h3>Bonus 1: Senarai rutin belajar</h3>
+            <p>Cadangan susunan aktiviti supaya ibu bapa tahu mahu mula dari mana.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🧩</div>
+            <h3>Bonus 2: Aktiviti bonding</h3>
+            <p>Idea mudah untuk belajar sambil bermain dan berbual dengan anak.</p>
+          </article>
+          <article class="card">
+            <div class="icon">🖨️</div>
+            <h3>Bonus 3: Checklist penggunaan</h3>
+            <p>Bantu anda pantau aktiviti yang sudah dibuat tanpa rasa serabut.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="order" class="section">
+      <div class="container pricing-wrap">
+        <div class="price-card">
+          <div class="price-label">Tawaran pengenalan</div>
+          <h2 style="font-size:clamp(1.8rem,3vw,2.8rem); margin-top:8px;">Dapatkan Teroka Minda hari ini.</h2>
+          <div class="price" aria-label="Harga ebook">
+            <span class="currency">RM</span><span class="amount">29</span><span class="cents">.00</span>
+          </div>
+          <div class="was-price">Harga asal cadangan: <s>RM69.00</s></div>
+          <a class="btn btn-primary" style="width:100%;" href="#checkout-form" data-track="price_cta">Beli Sekarang</a>
+
+          <ul class="checklist">
+            <li>Akses ebook digital selepas payment gateway siap disambungkan.</li>
+            <li>Sesuai untuk ibu bapa yang mahu bahan belajar lebih tersusun.</li>
+            <li>Boleh digunakan sebagai aktiviti tambahan di rumah.</li>
+            <li>Tiada janji ajaib — tetapi membantu anda mula dengan lebih mudah.</li>
+          </ul>
+
+          <div class="guarantee">
+            <strong>Nota jujur:</strong> Keputusan anak berbeza mengikut umur, minat dan konsistensi bimbingan. Ebook ini direka untuk membantu proses belajar, bukan menggantikan peranan ibu bapa atau guru.
+          </div>
+        </div>
+
+        <form id="checkout-form" class="order-form" novalidate>
+          <div class="eyebrow">🔒 Borang tempahan</div>
+          <h2 style="font-size:clamp(1.65rem,3vw,2.55rem);">Isi maklumat pembeli</h2>
+          <p class="small" style="margin:10px 0 20px;">Payment gateway akan disambung kemudian melalui <code>api.js</code>. Sekarang borang ini sudah sedia untuk tracking dan integrasi.</p>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="name">Nama penuh</label>
+              <input id="name" name="name" autocomplete="name" placeholder="Contoh: Nur Aina" required />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email" placeholder="nama@email.com" required />
+            </div>
+            <div class="field">
+              <label for="phone">No. WhatsApp</label>
+              <input id="phone" name="phone" inputmode="tel" autocomplete="tel" placeholder="Contoh: 0123456789" required />
+            </div>
+            <div class="field">
+              <label for="package">Pakej</label>
+              <select id="package" name="package" required>
+                <option value="teroka-minda-ebook" data-price="29.00">Teroka Minda Ebook — RM29.00</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:18px;" data-track="form_submit">Teruskan Ke Pembayaran</button>
+          <p class="form-note">Dengan meneruskan, pembeli akan dibawa ke payment gateway selepas integrasi dibuat. Anda boleh ubah teks ini mengikut polisi sebenar.</p>
+        </form>
+      </div>
+    </section>
+
+    <section id="faq" class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <h2>Soalan yang biasa pembeli tanya.</h2>
+          <p>Bahagian FAQ membantu kurangkan keraguan sebelum pembeli klik butang bayar.</p>
+        </div>
+
+        <div class="faq">
+          <details open>
+            <summary>Untuk umur berapa ebook ini sesuai?</summary>
+            <p>Ebook ini boleh digunakan sebagai aktiviti awal untuk kanak-kanak yang sedang belajar asas huruf, nombor, warna, bentuk dan fokus. Anda boleh sesuaikan aktiviti mengikut tahap anak.</p>
+          </details>
+          <details>
+            <summary>Adakah ebook ini dalam bentuk fizikal?</summary>
+            <p>Tidak. Ini ialah produk digital. Pembeli boleh akses secara digital selepas sistem pembayaran dan penghantaran fail disambungkan.</p>
+          </details>
+          <details>
+            <summary>Boleh guna di telefon?</summary>
+            <p>Boleh. Namun untuk aktiviti menulis atau mewarna, pengalaman terbaik biasanya melalui cetakan atau paparan skrin yang lebih besar.</p>
+          </details>
+          <details>
+            <summary>Berapa lama perlu buat aktiviti setiap hari?</summary>
+            <p>Mulakan dengan 10–15 minit. Tujuannya ialah konsisten dan positif, bukan memaksa anak belajar terlalu lama.</p>
+          </details>
+          <details>
+            <summary>Adakah ebook ini menjamin anak cepat pandai?</summary>
+            <p>Tidak ada bahan yang boleh menjamin keputusan segera. Ebook ini membantu menyediakan aktiviti dan struktur, manakala perkembangan anak bergantung kepada umur, minat, pengulangan dan bimbingan.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container final-cta">
+        <h2>Mulakan rutin belajar yang lebih seronok untuk anak hari ini.</h2>
+        <p>Daripada menunggu “masa sesuai”, anda boleh mula dengan aktiviti kecil yang tersusun. Teroka Minda membantu anda mulakan langkah itu dengan lebih mudah.</p>
+        <a class="btn btn-primary" href="#order" data-track="final_cta">Saya Nak Teroka Minda</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <strong>Teroka MINDA EDU</strong><br />
+        <span>terokaminda.com</span>
+      </div>
+      <div>
+        <span>© <span id="year"></span> Teroka Minda. Semua hak cipta terpelihara.</span>
+      </div>
+    </div>
+  </footer>
+
+  <div id="stickyCta" class="sticky-cta" aria-hidden="true">
+    <div class="sticky-inner">
+      <div>
+        <strong>Teroka Minda — RM29</strong>
+        <span>Ebook digital pembelajaran anak</span>
+      </div>
+      <a class="btn btn-primary" href="#order" data-track="sticky_cta">Beli Sekarang</a>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const year = document.getElementById('year');
+      if (year) year.textContent = new Date().getFullYear();
+
+      const sticky = document.getElementById('stickyCta');
+      const showStickyAfter = 520;
+      const toggleSticky = () => {
+        if (!sticky) return;
+        sticky.classList.toggle('show', window.scrollY > showStickyAfter);
+        sticky.setAttribute('aria-hidden', window.scrollY > showStickyAfter ? 'false' : 'true');
+      };
+      toggleSticky();
+      window.addEventListener('scroll', toggleSticky, { passive: true });
+
+      // Init tracking placeholder dalam api.js
+      if (window.TerokaMindaAPI) {
+        window.TerokaMindaAPI.init({
+          productName: 'Teroka Minda Ebook',
+          currency: 'MYR',
+          defaultAmount: 29.00,
+          website: 'https://terokaminda.com',
+          // Isi ID sebenar bila sudah sedia:
+          tracking: {
+            metaPixelId: '',
+            googleAnalyticsId: '',
+            tiktokPixelId: ''
+          },
+          payment: {
+            provider: 'setup_later',
+            endpoint: '/api/create-payment'
+          }
+        });
+
+        window.TerokaMindaAPI.track('PageView', {
+          page: 'landing_page',
+          product: 'Teroka Minda Ebook'
+        });
+      }
+
+      document.querySelectorAll('[data-track]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          if (window.TerokaMindaAPI) {
+            window.TerokaMindaAPI.track('ClickCTA', {
+              placement: el.getAttribute('data-track'),
+              text: (el.textContent || '').trim()
+            });
+          }
+        });
+      });
+
+      const form = document.getElementById('checkout-form');
+      form?.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+
+        const formData = new FormData(form);
+        const selectedOption = form.querySelector('#package option:checked');
+        const payload = {
+          name: String(formData.get('name') || '').trim(),
+          email: String(formData.get('email') || '').trim(),
+          phone: String(formData.get('phone') || '').trim(),
+          package: String(formData.get('package') || '').trim(),
+          amount: Number(selectedOption?.dataset.price || 29),
+          currency: 'MYR',
+          source: 'meta_ads_landing_page'
+        };
+
+        try {
+          if (!window.TerokaMindaAPI) throw new Error('api.js tidak dimuatkan.');
+          await window.TerokaMindaAPI.checkout(payload);
+        } catch (error) {
+          showToast(error.message || 'Maaf, ada masalah teknikal. Sila cuba lagi.');
+        }
+      });
+    });
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      if (!toast) return alert(message);
+      toast.textContent = message;
+      toast.classList.add('show');
+      window.clearTimeout(window.__toastTimer);
+      window.__toastTimer = window.setTimeout(function () {
+        toast.classList.remove('show');
+      }, 5200);
+    }
+  </script>
+</body>
+</html>
