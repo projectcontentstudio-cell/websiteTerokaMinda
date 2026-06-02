@@ -67,6 +67,37 @@ function cleanToyyibText(value, maxLength) {
     .slice(0, maxLength);
 }
 
+function cleanEmailContent(value, maxLength) {
+  // ToyyibPay billContentEmail supports additional customer email text, max 1000 characters.
+  return String(value || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+    .slice(0, maxLength);
+}
+
+function buildCustomerInstructionEmail({ name, referenceNo }) {
+  const safeName = name || 'Pelanggan';
+
+  return cleanEmailContent([
+    `Assalamualaikum/Salam sejahtera ${safeName},`,
+    '',
+    'Terima kasih kerana membeli Teroka Minda Ebook.',
+    '',
+    'Arahan selepas pembayaran berjaya:',
+    `1. Simpan resit ToyyibPay dan nombor rujukan: ${referenceNo}.`,
+    '2. Klik kembali ke halaman Payment Successful selepas pembayaran.',
+    '3. Ebook/akses digital akan dihantar ke email yang digunakan semasa pembelian.',
+    '4. Jika belum terima akses, hubungi admin dan berikan nama, email, nombor WhatsApp serta nombor rujukan ToyyibPay.',
+    '',
+    `Laman rasmi: ${SITE_URL}`
+  ].join('\n'), 1000);
+}
+
 function makeReferenceNo() {
   const random = crypto.randomBytes(3).toString('hex').toUpperCase();
   return `TM${Date.now()}${random}`.slice(0, 30);
@@ -212,6 +243,7 @@ function buildToyyibPayParams({ product, referenceNo, name, email, phone }) {
   appendParam(params, 'billEmail', email);
   appendParam(params, 'billPhone', phone);
   appendParam(params, 'billPaymentChannel', '0');
+  appendParam(params, 'billContentEmail', buildCustomerInstructionEmail({ name, referenceNo }));
 
   return params;
 }
